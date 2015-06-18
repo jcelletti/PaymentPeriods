@@ -5,7 +5,7 @@ using JMC.Repositories.Abstractions.Interfaces;
 
 namespace JMC.Repositories.Database.Repositories
 {
-	public class PeriodRepository : IPeriodRepository
+	public class PeriodDatabaseRepository : IPeriodRepository
 	{
 		public Guid Add(PeriodEntity entity)
 		{

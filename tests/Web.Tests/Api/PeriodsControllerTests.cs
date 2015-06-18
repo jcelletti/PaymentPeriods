@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Microsoft.AspNet.Mvc;
+using JMC.Web.Controllers;
+using JMC.Web.DTOs;
+using System.Linq;
 
 namespace JMC.Web.Tests.Api
 {
@@ -22,7 +25,7 @@ namespace JMC.Web.Tests.Api
 			Mock<IPeriodRepository> mock;
 			PeriodsController controller = PeriodControllerTests.Setup(out mock);
 
-			var dummyList = new List<PeriodEntity>
+			IEnumerable<PeriodEntity> dummyList = new List<PeriodEntity>
 				{
 					new PeriodEntity
 					{
@@ -43,13 +46,11 @@ namespace JMC.Web.Tests.Api
 
 			Assert.IsType<ObjectResult>(result);
 
-			object content = ((ObjectResult)result).Value;
+			IEnumerable<Period> enumerable = ((ObjectResult)result).Value as IEnumerable<Period>;
 
-			Assert.IsType<IEnumerable<Period>>(content);
+			Assert.NotNull(enumerable);
 
-			var enumerable = (IEnumerable<Period>)content;
-
-			Assert.Equal(dummyList.Count, enumerable.Count());
+			Assert.Equal(dummyList.Count(), enumerable.Count());
 		}
 	}
 }
