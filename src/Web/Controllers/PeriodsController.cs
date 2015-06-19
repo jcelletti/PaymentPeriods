@@ -36,9 +36,11 @@ namespace JMC.Web.Controllers
 			throw new NotImplementedException();
 		}
 
-		public override IActionResult Post()
+		public override IActionResult Post(Period entity)
 		{
-			throw new NotImplementedException();
+			Guid id = this._repository.Add(entity.ToEntity());
+
+			return this.CreatedAtAction("Get", id);
 		}
 
 		public override IActionResult Put(Guid id, Period entity)

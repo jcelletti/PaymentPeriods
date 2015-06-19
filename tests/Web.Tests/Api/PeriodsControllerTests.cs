@@ -20,10 +20,10 @@ namespace JMC.Web.Tests.Api
 		}
 
 		[Fact]
-		public void Get()
+		public void Get_GetAll_IsValid()
 		{
 			Mock<IPeriodRepository> mock;
-			PeriodsController controller = PeriodControllerTests.Setup(out mock);
+			PeriodsController sut = PeriodControllerTests.Setup(out mock);
 
 			IEnumerable<PeriodEntity> dummyList = new List<PeriodEntity>
 				{
@@ -42,7 +42,7 @@ namespace JMC.Web.Tests.Api
 			mock.Setup(r => r.Get())
 				.Returns(dummyList);
 
-			IActionResult result = controller.Get();
+			IActionResult result = sut.Get();
 
 			Assert.IsType<ObjectResult>(result);
 
@@ -51,6 +51,28 @@ namespace JMC.Web.Tests.Api
 			Assert.NotNull(enumerable);
 
 			Assert.Equal(dummyList.Count(), enumerable.Count());
+			mock.Verify(r => r.Get(), Times.Once);
+		}
+
+		[Fact]
+		public void Post_New_IsValid()
+		{
+			Mock<IPeriodRepository> mock;
+			PeriodsController sut = PeriodControllerTests.Setup(out mock);
+
+			Guid id = Guid.NewGuid();
+			const string name = "New Period Name";
+
+			mock.Setup(r => r.Add(It.Is<PeriodEntity>(e => e.Id == Guid.Empty && string.Equals(e.Name, name))))
+				.Returns(id);
+
+			IActionResult result = sut.Post(new Period
+			{
+				Name = name
+			});
+
+			Assert.IsType<CreatedAtActionResult>(result);
+			mock.Verify(r => r.Add(It.Is<PeriodEntity>(e => e.Id == Guid.Empty && string.Equals(e.Name, name))), Times.Once);
 		}
 	}
 }

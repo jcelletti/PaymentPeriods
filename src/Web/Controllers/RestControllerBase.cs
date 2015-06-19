@@ -8,7 +8,7 @@ namespace JMC.Web.Controllers
 	{
 		[HttpPost]
 		[Route("")]
-		public abstract IActionResult Post();
+		public abstract IActionResult Post(TEntity entity);
 
 		[HttpGet]
 		[Route("")]
