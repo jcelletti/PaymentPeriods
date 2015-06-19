@@ -1,4 +1,4 @@
-﻿using JMC.Web.App_Start;
+﻿using JMC.Repositories.Database.Extensions;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc;
@@ -22,6 +22,12 @@ namespace JMC.Web
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSql(this.configuration.Get("Data:DefaultConnection:ConnectionString"), 30);
+				//todo:configure
+				//.Configure<SqlOptions>(
+				//	o => { o.Configure(this.configuration.Get("Data.DefaultConnection.ConnectionString"), 30); }
+				//);
+
 			services.AddMvc()
 				.Configure<MvcOptions>(o =>
 			{
@@ -43,12 +49,13 @@ namespace JMC.Web
 
 				o.OutputFormatters.Add(jsonFormatter);
 			});
-
-			ServiceConfiguration.AddDependencies(services);
 		}
 
 		public void Configure(IApplicationBuilder app)
 		{
+			app.UseMvc();
+
+			app.UseSql();
 		}
 	}
 }

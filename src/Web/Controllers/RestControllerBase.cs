@@ -4,7 +4,7 @@ using Microsoft.AspNet.Mvc;
 namespace JMC.Web.Controllers
 {
 	[Route("api/[controller]")]
-	public abstract class RestControllerBase<TEntity, TId> where TEntity : DtoEntity<TId>
+	public abstract class RestControllerBase<TEntity, TId> : Controller where TEntity : DtoEntity<TId>
 	{
 		[HttpPost]
 		[Route("")]
@@ -15,7 +15,7 @@ namespace JMC.Web.Controllers
 		public abstract IActionResult Get();
 
 		[HttpGet]
-		[Route("")]
+		[Route("{id}")]
 		public abstract IActionResult Get(TId id);
 
 		[HttpPut]
@@ -25,7 +25,7 @@ namespace JMC.Web.Controllers
 		[HttpDelete]
 		[Route("")]
 		public abstract IActionResult Delete(TId id);
-		
+
 		protected IActionResult Ok(object value)
 		{
 			return new ObjectResult(value);
