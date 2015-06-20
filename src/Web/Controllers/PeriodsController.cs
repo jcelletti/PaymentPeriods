@@ -5,6 +5,7 @@ using JMC.Web.DTOs;
 using JMC.Core.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using JMC.Repositories.Abstractions.Exceptions;
 
 namespace JMC.Web.Controllers
 {
@@ -33,19 +34,71 @@ namespace JMC.Web.Controllers
 
 		public override IActionResult Get(Guid id)
 		{
-			throw new NotImplementedException();
+			if (id == Guid.Empty)
+			{
+				return this.InvalidId(id);
+			}
+
+			PeriodEntity entity = this._repository.Get(id);
+
+			if (entity == null)
+			{
+				return this.HttpNotFoundObject();
+			}
+
+			return this.Ok(Period.Parse(entity));
 		}
 
-		public override IActionResult Post(Period entity)
+		public override IActionResult Post(Period model)
 		{
-			Guid id = this._repository.Add(entity.ToEntity());
+			if (model == null)
+			{
+				return this.InvalidArgument<Period>(nameof(model));
+			}
 
-			return this.CreatedAtAction("Get", id);
+			try
+			{
+				Guid id = this._repository.Add(model.ToEntity());
+
+				return this.CreatedAtAction("Get", id);
+			}
+			catch (InvalidObjectStateException e)
+			{
+				return this.InvalidState(e.Property);
+			}
+			catch (DuplicateObjectException e)
+			{
+				return this.DuplicateObject(e.Property);
+			}
 		}
 
-		public override IActionResult Put(Guid id, Period entity)
+		public override IActionResult Put(Guid id, Period model)
 		{
-			throw new NotImplementedException();
+			if (id == Guid.Empty)
+			{
+				return this.InvalidId(id);
+			}
+
+			if (model == null)
+			{
+				return this.InvalidArgument(nameof(model));
+			}
+
+			PeriodEntity entity = this._repository.Get(id);
+
+			if (entity == null)
+			{
+				return this.HttpNotFoundObject();
+			}
+
+			//todo: mapper
+			entity.Name = model.Name;
+
+			this._repository.Update(entity);
+
+			return this.NoContent();
 		}
+
+		//todo: get by validated state
 	}
 }
