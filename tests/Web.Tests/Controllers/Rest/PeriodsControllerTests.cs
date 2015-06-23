@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Microsoft.AspNet.Mvc;
-using JMC.Web.Controllers;
+using JMC.Web.Controllers.Rest;
 using JMC.Web.DTOs;
 using System.Linq;
 using JMC.Repositories.Abstractions.Exceptions;
 
-namespace JMC.Web.Tests.Api
+namespace JMC.Web.Tests.Controllers.Rest
 {
 	public class PeriodControllerTests
 	{
@@ -171,8 +171,6 @@ namespace JMC.Web.Tests.Api
 			Mock<IPeriodRepository> mock;
 			PeriodsController sut = PeriodControllerTests.Setup(out mock);
 
-			Guid id = Guid.NewGuid();
-
 			mock.Setup(r => r.Add(It.Is<PeriodEntity>(e => e.Id == Guid.Empty && string.Equals(e.Name, name))))
 				.Throws(new DuplicateObjectException("Name"));
 
@@ -192,8 +190,6 @@ namespace JMC.Web.Tests.Api
 
 			Assert.Equal(typeof(Period), dup.ObjectType);
 		}
-
-		//todo: post validated = true
 
 		[Theory]
 		[InlineData("Name", null, false)]
@@ -319,11 +315,83 @@ namespace JMC.Web.Tests.Api
 			this.InvalidRequest(result);
 		}
 
-		//todo: model null
+		[Theory]
+		[InlineData("A492CC31-5529-4512-B378-0F6644BB5079", "310F5A7D-3D54-4B3C-A301-B881D3B41A9F")]
+		[InlineData("419A1D6C-9F21-4DA8-B7B5-A7E7799BFEF6", "80C8C4D0-73D0-4086-9F08-6607743D68F5")]
+		[InlineData("A758893A-2710-4B39-B9E1-0E8AA9438EC5", "8419B600-7778-41CF-9788-9C68F5AAF6A8")]
+		[InlineData("129C8F94-2C38-4429-B467-073159C1DE8A", "719411B2-69F1-49F6-A979-B9D2F4BC04FD")]
+		[InlineData("978A7C5D-4B49-49CB-8007-DCE883D12E5F", "FE266863-D74E-4075-A497-D2117796DB29")]
+		[InlineData("C73BE77B-6480-465D-ADDE-CBAA80EAC003", "8372A7C1-77AC-4E9E-AC15-9326E15887C3")]
+		[InlineData("924DA9AF-3682-4FF0-ABBD-AC83D160D4EB", "CC277FC9-2969-4D37-8419-158B401C5E1E")]
+		public void Put_IdsDontMatch_IsValid(string idString, string putIdString)
+		{
+			Mock<IPeriodRepository> mock;
+			PeriodsController sut = PeriodControllerTests.Setup(out mock);
 
-		//todo: id and object id do not match
+			Guid id = new Guid(idString);
+			Guid putId = new Guid(putIdString);
 
-		//todo: cannot update validated
+			var dummy = new PeriodEntity
+			{
+				Id = id,
+				Name = "dummy",
+				Validated = false
+			};
+
+			var updated = new Period
+			{
+				Id = putId,
+				Name = "wrong id",
+				Validated = dummy.Validated
+			};
+
+			mock.Setup(r => r.Get(It.Is<Guid>(g => g == id)))
+				.Returns(dummy);
+
+			mock.Setup(r => r.Update(It.Is<PeriodEntity>(e => e.Id == id && string.Equals(e.Name, updated.Name))));
+
+			IActionResult result = sut.Put(id, updated);
+
+			Assert.IsType<NoContentResult>(result);
+
+			mock.Verify(r => r.Get(It.Is<Guid>(g => g == id)), Times.Once);
+
+			mock.Verify(r => r.Update(It.Is<PeriodEntity>(e => e.Id == id && string.Equals(e.Name, updated.Name))), Times.Once);
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public void Put_UpdateValidated_InvalidState(bool postValidated)
+		{
+			Mock<IPeriodRepository> mock;
+			PeriodsController sut = PeriodControllerTests.Setup(out mock);
+
+			Guid id = Guid.NewGuid();
+
+			var dummy = new PeriodEntity
+			{
+				Id = id,
+				Name = "dummy",
+				Validated = true
+			};
+
+			var updated = new Period
+			{
+				Id = id,
+				Name = "new name",
+				Validated = dummy.Validated
+			};
+
+			mock.Setup(r => r.Get(It.Is<Guid>(g => g == id)))
+				.Returns(dummy);
+
+			IActionResult result = sut.Put(id, updated);
+
+			Assert.IsType<InvalidStateObjectResult>(result);
+
+			mock.Verify(r => r.Get(It.Is<Guid>(g => g == id)), Times.Once);
+		}
 
 		//todo: cannot update to validated
 

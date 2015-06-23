@@ -3,7 +3,7 @@ using JMC.Web.DTOs;
 using Microsoft.AspNet.Mvc;
 using System.Collections.Generic;
 
-namespace JMC.Web.Controllers
+namespace JMC.Web.Controllers.Rest
 {
 	[Route("api/[controller]")]
 	public abstract class RestControllerBase<TApi, TId> : Controller where TApi : DtoEntity<TId>

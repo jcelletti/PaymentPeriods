@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JMC.Repositories.Abstractions.Exceptions;
 
-namespace JMC.Web.Controllers
+namespace JMC.Web.Controllers.Rest
 {
 	public class PeriodsController : RestControllerBase<Period, Guid>
 	{
@@ -89,6 +89,11 @@ namespace JMC.Web.Controllers
 			if (entity == null)
 			{
 				return this.HttpNotFoundObject();
+			}
+
+			if (entity.Validated)
+			{
+				return this.InvalidState(nameof(entity.Validated));
 			}
 
 			//todo: mapper
