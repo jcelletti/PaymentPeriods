@@ -1,9 +1,30 @@
-﻿@*
-	For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-	this.ViewBag.Title = "Home Page";
-	this.Layout = "_Layout";
-}
+﻿<!doctype html>
 
-<h1>this is a test</h1>
+<html>
+<head>
+	<base href="/" />
+
+	<link href="lib/contents/css/bootstrap.css" rel="stylesheet" />
+	<script src="lib/scripts/jquery.js"></script>
+	<script src="lib/scripts/angular.js"></script>
+	<script src="lib/scripts/angular-route.js"></script>
+	<script src="lib/scripts/bootstrap.js"></script>
+
+	<script src="scripts/spa.js"></script>
+</head>
+<body data-ng-app="JMCApp">
+
+	<header data-ng-controller="HeaderCtrl"></header>
+
+	<div data-ng-controller="SpaCtrl">
+		{{test}}
+	</div>
+
+	<div>
+		<div data-ng-view=""></div>
+	</div>
+
+	<footer data-ng-controller="FooterCtrl"></footer>
+
+</body>
+</html>

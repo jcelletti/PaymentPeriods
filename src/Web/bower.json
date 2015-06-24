@@ -1,0 +1,11 @@
+{
+	"name": "bower",
+	"license": "Apache-2.0",
+	"private": true,
+	"dependencies": {
+		"angular": "1.4.1",
+		"angular-route": "1.4.1",
+		"bootstrap": "3.3.5",
+		"jQuery": "2.1.4"
+	}
+}

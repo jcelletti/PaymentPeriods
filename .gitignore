@@ -191,3 +191,4 @@ ModelManifest.xml
 project.lock.json
 .vs/config/applicationhost.config
 src/Web/Config.json
+wwwroot/
