@@ -6,11 +6,11 @@ using System.Collections.Generic;
 namespace JMC.Web.Controllers.Rest
 {
 	[Route("api/[controller]")]
-	public abstract class RestControllerBase<TApi, TId> : Controller where TApi : DtoEntity<TId>
+	public abstract class RestControllerBase<TModel, TId> : Controller where TModel : DtoEntity<TId>
 	{
 		[HttpPost]
 		[Route("")]
-		public abstract IActionResult Post([FromBody]TApi api);
+		public abstract IActionResult Post([FromBody]TModel model);
 
 		[HttpGet]
 		[Route("")]
@@ -22,25 +22,25 @@ namespace JMC.Web.Controllers.Rest
 
 		[HttpPut]
 		[Route("{id}")]
-		public abstract IActionResult Put(TId id, [FromBody] TApi api);
+		public abstract IActionResult Put(TId id, [FromBody] TModel model);
 
 		[HttpDelete]
 		[Route("")]
 		public abstract IActionResult Delete(TId id);
 
-		protected IActionResult Ok(TApi value)
+		protected IActionResult Ok(TModel value)
 		{
 			return new ObjectResult(value);
 		}
 
-		protected IActionResult Ok(IEnumerable<TApi> value)
+		protected IActionResult Ok(IEnumerable<TModel> value)
 		{
 			return new ObjectResult(value);
 		}
 
 		protected IActionResult InvalidArgument(string argumentName)
 		{
-			return this.InvalidArgument<TApi>(argumentName);
+			return this.InvalidArgument<TModel>(argumentName);
 		}
 
 		protected IActionResult InvalidArgument<T>(string argumentName)
@@ -50,7 +50,7 @@ namespace JMC.Web.Controllers.Rest
 
 		protected IActionResult InvalidState(string property)
 		{
-			return this.InvalidState<TApi>(property);
+			return this.InvalidState<TModel>(property);
 		}
 
 		protected IActionResult InvalidState<T>(string property)
@@ -60,7 +60,7 @@ namespace JMC.Web.Controllers.Rest
 
 		protected IActionResult HttpNotFoundObject()
 		{
-			return this.HttpNotFoundObject<TApi>();
+			return this.HttpNotFoundObject<TModel>();
 		}
 
 		protected IActionResult HttpNotFoundObject<T>()
@@ -70,7 +70,7 @@ namespace JMC.Web.Controllers.Rest
 
 		protected IActionResult InvalidId(TId id)
 		{
-			return this.InvalidId<TApi>(id);
+			return this.InvalidId<TModel>(id);
 		}
 
 		protected IActionResult InvalidId<T>(TId id)
@@ -85,7 +85,7 @@ namespace JMC.Web.Controllers.Rest
 
 		protected IActionResult DuplicateObject(string property)
 		{
-			return this.DuplicateObject<TApi>(property);
+			return this.DuplicateObject<TModel>(property);
 		}
 
 		protected IActionResult DuplicateObject<T>(string property)

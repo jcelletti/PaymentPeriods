@@ -1,4 +1,5 @@
-﻿using JMC.Repositories.Database.Extensions;
+﻿using JMC.Repositories.Database;
+using JMC.Repositories.Database.Repositories;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc;
@@ -7,6 +8,8 @@ using Microsoft.Framework.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace JMC.Web
 {
@@ -22,40 +25,45 @@ namespace JMC.Web
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddSql(this.configuration.Get("Data:DefaultConnection:ConnectionString"), 30);
-				//todo:configure
-				//.Configure<SqlOptions>(
-				//	o => { o.Configure(this.configuration.Get("Data.DefaultConnection.ConnectionString"), 30); }
-				//);
+			services.UseAndSetupEntityFramework(this.configuration);
+
+			services
+				.UseDatabase();
 
 			services.AddMvc()
-				.Configure<MvcOptions>(o =>
-			{
-				o.OutputFormatters.RemoveTypesOf<JsonOutputFormatter>();
-
-				var jsonFormatter = new JsonOutputFormatter
+				.ConfigureMvc(o =>
 				{
-					SerializerSettings = new JsonSerializerSettings
+					JsonOutputFormatter jsonOutputFormatter = o.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
+
+					if (jsonOutputFormatter == null)
+					{
+						jsonOutputFormatter = new JsonOutputFormatter();
+						o.OutputFormatters.Insert(0, jsonOutputFormatter);
+					}
+
+					jsonOutputFormatter.SerializerSettings = new JsonSerializerSettings
 					{
 						ContractResolver = new CamelCasePropertyNamesContractResolver(),
-						NullValueHandling = NullValueHandling.Ignore,
 						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-						DateFormatHandling = DateFormatHandling.IsoDateFormat
-					}
-				};
+						NullValueHandling = NullValueHandling.Ignore,
+						TypeNameHandling = TypeNameHandling.Auto,
+						DateFormatHandling = DateFormatHandling.IsoDateFormat,
+#if DEBUG
+						Formatting = Formatting.Indented,
+#endif
+						Converters = new List<JsonConverter>
+							{
+								new StringEnumConverter(),
+								new IsoDateTimeConverter()
+							}
+					};
 
-				jsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
-				jsonFormatter.SerializerSettings.Converters.Add(new IsoDateTimeConverter());
-
-				o.OutputFormatters.Add(jsonFormatter);
-			});
+				});
 		}
 
 		public void Configure(IApplicationBuilder app)
 		{
 			app.UseMvc();
-
-			app.UseSql();
 		}
 	}
 }
