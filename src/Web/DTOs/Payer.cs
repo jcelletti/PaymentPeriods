@@ -29,4 +29,23 @@ namespace JMC.Web.DTOs
 			};
 		}
 	}
+
+	public class PayerDetail : DtoEntity<Guid>
+	{
+		public string Name { get; set; }
+
+		public static PayerDetail Parse(PayerEntity entity)
+		{
+			return new PayerDetail
+			{
+				Id = entity.Id,
+				Name = $"{entity.First} {entity.Last}".Trim()
+			};
+		}
+
+		public PayerEntity ToEntity()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

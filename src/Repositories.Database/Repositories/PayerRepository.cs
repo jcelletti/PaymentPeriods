@@ -19,12 +19,33 @@ namespace JMC.Repositories.Database.Repositories
 
 		public Guid Add(PayerEntity entity)
 		{
-			throw new NotImplementedException();
+			Guid id = Guid.NewGuid();
+			var newSql = new PayerSql
+			{
+				Id = id,
+				First = entity.First,
+				Last = entity.Last
+			};
+
+			this.dbContext.Payers.Add(newSql);
+
+			this.dbContext.SaveChanges();
+
+			return id;
 		}
 
 		public void Delete(Guid id)
 		{
-			throw new NotImplementedException();
+			PayerSql payer = this.dbContext.Payers.FirstOrDefault(p => p.Id == id);
+
+			if (payer == null)
+			{
+				throw new Exception("Not found");
+			}
+
+			this.dbContext.Payers.Remove(payer);
+
+			this.dbContext.SaveChanges();
 		}
 
 		public IEnumerable<PayerEntity> Get()
@@ -41,12 +62,34 @@ namespace JMC.Repositories.Database.Repositories
 
 		public PayerEntity Get(Guid id)
 		{
-			throw new NotImplementedException();
+			PayerSql payer = this.dbContext.Payers.FirstOrDefault(p => p.Id == id);
+
+			if (payer == null)
+			{
+				return null;
+			}
+
+			return new PayerEntity
+			{
+				Id = payer.Id,
+				First = payer.First,
+				Last = payer.Last
+			};
 		}
 
 		public void Update(PayerEntity entity)
 		{
-			throw new NotImplementedException();
+			PayerSql payer = this.dbContext.Payers.FirstOrDefault(p => p.Id == entity.Id);
+
+			if (payer == null)
+			{
+				throw new Exception("Not found");
+			}
+
+			payer.First = entity.First;
+			payer.Last = entity.Last;
+
+			this.dbContext.SaveChanges();
 		}
 	}
 }

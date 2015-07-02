@@ -5,51 +5,100 @@ using JMC.Web.DTOs;
 using JMC.Core.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using JMC.Repositories.Abstractions.Exceptions;
 
 namespace JMC.Web.Controllers.Rest
 {
 	public class PayersController : RestControllerBase<Payer, Guid>
 	{
-		private IPayerRepository _repository;
+		private IPayerRepository repository;
 
 		public PayersController(IPayerRepository repository)
 		{
-			this._repository = repository;
+			this.repository = repository;
 		}
 
 		public override IActionResult Delete(Guid id)
 		{
-			throw new NotImplementedException();
+			this.repository.Delete(id);
+
+			return this.NoContent();
 		}
 
 		public override IActionResult Get()
 		{
-			IEnumerable<PayerEntity> entities = this._repository.Get();
+			IEnumerable<PayerEntity> entities = this.repository.Get();
 
-			IEnumerable<Payer> outItems = entities.Select(e => new Payer
-			{
-				Id = e.Id,
-				First = e.First,
-				Last = e.Last
-			});
+			IEnumerable<Payer> outItems = entities.Select(Payer.Parse);
 
 			return this.Ok(outItems);
 		}
 
 		public override IActionResult Get(Guid id)
 		{
-			throw new NotImplementedException();
+			PayerEntity entity = this.repository.Get(id);
+
+			return this.Ok(Payer.Parse(entity));
 		}
 
-		public override IActionResult Post([FromBody]Payer api)
+		public override IActionResult Post([FromBody]Payer model)
 		{
-			throw new NotImplementedException();
+			//todo: model state
+
+			PayerEntity entity = model.ToEntity();
+
+			Guid id = this.repository.Add(entity);
+
+			return this.CreatedAtAction("Get", id);
 		}
 
-		public override IActionResult Put(Guid id, [FromBody]Payer api)
+		public override IActionResult Put(Guid id, [FromBody]Payer model)
 		{
-			throw new NotImplementedException();
+			//todo: model state
+			model.Id = id;
+			
+			this.repository.Update(model.ToEntity());
+
+			return this.NoContent();
 		}
 	}
+
+	public class PayerDetailsController : RestControllerBase<PayerDetail, Guid>
+	{
+		private IPayerRepository repository;
+
+		public PayerDetailsController(IPayerRepository repository)
+		{
+			this.repository = repository;
+		}
+
+		public override IActionResult Delete(Guid id)
+		{
+			return this.HttpNotFound();
+		}
+
+		public override IActionResult Get()
+		{
+			IEnumerable<PayerEntity> entities = this.repository.Get();
+
+			IEnumerable<PayerDetail> outItems = entities.Select(PayerDetail.Parse);
+
+			return this.Ok(outItems);
+		}
+
+		public override IActionResult Get(Guid id)
+		{
+			return this.HttpNotFound();
+		}
+
+		public override IActionResult Post([FromBody]PayerDetail model)
+		{
+			return this.HttpNotFound();
+		}
+
+		public override IActionResult Put(Guid id, [FromBody]PayerDetail model)
+		{
+			return this.HttpNotFound();
+		}
+	}
+
 }

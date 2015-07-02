@@ -2,15 +2,8 @@
 
 namespace JMC.Web.Controllers.Views
 {
-	[Route("[controller]")]
 	[Route("")]
-	public class SpaController : Controller
+	public class SpaController : ViewBaseController
 	{
-		[Route("Index")]
-		[Route("")]
-		public IActionResult Index()
-		{
-			return this.View();
-		}
 	}
 }

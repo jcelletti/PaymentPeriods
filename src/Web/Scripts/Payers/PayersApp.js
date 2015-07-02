@@ -1,0 +1,1 @@
+﻿angular.module('payersApp', ['payer.controllers', 'payer.directives', 'payer.services']);

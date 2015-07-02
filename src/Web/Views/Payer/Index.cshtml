@@ -1,0 +1,13 @@
+﻿@{
+	this.Layout = "_Layout";
+	this.ViewBag.Title = "Payers";
+}
+
+
+<div data-ng-app="payersApp" data-ng-controller="PayersController">
+
+	<div data-ng-if="loaded">
+		<div data-ng-repeat="p in PayerDetails" data-jmc-payer-detail="p"></div>
+	</div>
+
+</div>
