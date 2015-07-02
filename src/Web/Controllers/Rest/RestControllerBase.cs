@@ -10,7 +10,7 @@ namespace JMC.Web.Controllers.Rest
 	{
 		[HttpPost]
 		[Route("")]
-		public abstract IActionResult Post(TApi api);
+		public abstract IActionResult Post([FromBody]TApi api);
 
 		[HttpGet]
 		[Route("")]
@@ -22,7 +22,7 @@ namespace JMC.Web.Controllers.Rest
 
 		[HttpPut]
 		[Route("{id}")]
-		public abstract IActionResult Put(TId id, TApi api);
+		public abstract IActionResult Put(TId id, [FromBody] TApi api);
 
 		[HttpDelete]
 		[Route("")]

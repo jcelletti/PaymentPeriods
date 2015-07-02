@@ -49,7 +49,7 @@ namespace JMC.Web.Controllers.Rest
 			return this.Ok(Period.Parse(entity));
 		}
 
-		public override IActionResult Post(Period model)
+		public override IActionResult Post([FromBody]Period model)
 		{
 			if (model == null)
 			{
@@ -72,7 +72,7 @@ namespace JMC.Web.Controllers.Rest
 			}
 		}
 
-		public override IActionResult Put(Guid id, Period model)
+		public override IActionResult Put(Guid id, [FromBody]Period model)
 		{
 			if (id == Guid.Empty)
 			{

@@ -1,7 +1,7 @@
 ﻿{
 	"Data": {
 		"DefaultConnection": {
-			"ConnectionString": "Server={Server_Name};Database={Database.Name};User={User_Id};Password={User_Password}"
+			"ConnectionString": "Server={Server_Name};Database={Database_Name};User={User_Id};Password={User_Password}"
 		}
 	}
 }
