@@ -1,7 +1,54 @@
-﻿body {
-	font-size: 18px;
+﻿@import 'bootstrap.less';
 
-	span {
-		font-size: 1em;
+body
+{
+	font-size: 14px;
+}
+
+i
+{
+	cursor: pointer;
+}
+
+.jmc-payer-details
+{
+	.make-row(0);
+	margin: 20px 10px;
+
+	.jmc-payer-detail-container
+	{
+		.make-xs-column(4);
+		.make-sm-column(3);
+		.make-md-column(2);
+
+		.jmc-payer-detail
+		{
+			border: 1px solid #656565;
+			.make-row(0);
+			text-align: center;
+
+			.jmc-name
+			{
+				.make-sm-column(8, 0);
+				font-weight: bold;
+			}
+
+			.jmc-icons
+			{
+				.make-sm-column(4, 0);
+				text-align: right;
+
+				i
+				{
+					margin-right: 10px;
+				}
+			}
+		}
 	}
+}
+
+.jmc-payer-edit
+{
+	margin: 20px 10px;
+	max-width: 500px;
 }

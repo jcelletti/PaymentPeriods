@@ -50,7 +50,14 @@ var bower = function (root) {
 				css: bowerBase + 'bootstrap/dist/css/',
 				js: bowerBase + 'bootstrap/dist/js/',
 				fonts: bowerBase + 'bootstrap/dist/fonts/'
-			}
+			},
+			less: bowerBase + 'bootstrap/less/',
+		},
+		fontawesome: {
+			base: bowerBase + 'font-awesome/',
+			css: bowerBase + 'font-awesome/css/',
+			fonts: bowerBase + 'font-awesome/fonts/',
+			less: bowerBase + 'font-awesome/less/',
 		},
 		jquery: {
 			base: bowerBase + 'jQuery/',
@@ -119,7 +126,7 @@ gulp.task('copy_bower_scripts',
 			bower.bootstrap.dist.js + 'bootstrap.js',
 			bower.jquery.dist + 'jquery.js'
 		])
-			.pipe(uglify())
+			//.pipe(uglify())
 			.pipe(gulp.dest(wwwroot.lib.scripts));
 	});
 
@@ -128,6 +135,7 @@ gulp.task('copy_bower_css',
 		return gulp.src([
 			bower.bootstrap.dist.css + 'bootstrap.css',
 			bower.bootstrap.dist.css + 'bootstrap-theme.css',
+			bower.fontawesome.css + 'font-awesome.css'
 		])
 			.pipe(cssmin())
 			.pipe(gulp.dest(wwwroot.lib.contents.css));
@@ -137,6 +145,7 @@ gulp.task('copy_bower_fonts',
 	function () {
 		return gulp.src([
 			bower.bootstrap.dist.fonts + '*',
+			bower.fontawesome.fonts + '*'
 		])
 			.pipe(gulp.dest(wwwroot.lib.contents.fonts));
 	});
@@ -161,7 +170,9 @@ gulp.task('copy_less',
 			custom.contents.less + '**/*.less'
 		])
 			.pipe(concat('spa.css'))
-			.pipe(less())
+			.pipe(less({
+				paths:[bower.bootstrap.less]
+			}))
 			.pipe(gulp.dest(wwwroot.contents.css));
 	});
 

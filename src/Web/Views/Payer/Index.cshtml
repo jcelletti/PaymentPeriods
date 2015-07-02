@@ -6,8 +6,12 @@
 
 <div data-ng-app="payersApp" data-ng-controller="PayersController">
 
-	<div data-ng-if="loaded">
-		<div data-ng-repeat="p in PayerDetails" data-jmc-payer-detail="p"></div>
+	<div data-ng-if="!Contents.CurrentPayerSet && Contents.Loaded" class="jmc-payer-details">
+		<div data-ng-repeat="p in Contents.PayerDetails" data-jmc-payer-detail="p" data-selected-payer-id="Contents.PayerId"></div>
+	</div>
+
+	<div data-ng-if="Contents.CurrentPayerSet">
+		<div data-jmc-payer-edit="Contents.Payer" data-payer-id="Contents.PayerId"></div>
 	</div>
 
 </div>

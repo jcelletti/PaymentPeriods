@@ -3,4 +3,4 @@
 		function () {
 			return jQuery;
 		}
-	])
+	]);

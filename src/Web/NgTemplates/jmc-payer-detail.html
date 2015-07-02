@@ -1,1 +1,12 @@
-﻿<pre data-ng-bind="detail|json"></pre>
+﻿<div class="jmc-payer-detail-container">
+	<div class="jmc-payer-detail">
+		<div class="jmc-name">
+			<span data-ng-bind="detail.Name"></span>
+		</div>
+
+		<div class="jmc-icons">
+			<i class="fa fa-cog" ng-click="Functions.Edit()"></i>
+			<i class="fa fa-times-circle" ng-click="Functions.Delete()"></i>
+		</div>
+	</div>
+</div>

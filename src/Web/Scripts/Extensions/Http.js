@@ -6,12 +6,12 @@
 				requestError: function (rej) {
 					alert(rej);
 					//logger.debug(rej);
-					q.reject(rej);
+					$q.reject(rej);
 				},
 				responseError: function (rej) {
 					alert(rej);
 					//logger.debug(rej);
-					q.reject(rej);
+					$q.reject(rej);
 				}
 			};
 		}
