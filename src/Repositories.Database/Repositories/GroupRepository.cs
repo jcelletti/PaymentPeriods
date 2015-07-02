@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace JMC.Repositories.Database.Repositories
 {
-	public class GroupRepository : IGroupRepository
+	public class GroupDatabaseRepository : IGroupRepository
 	{
 		public Guid Add(GroupEntity entity)
 		{

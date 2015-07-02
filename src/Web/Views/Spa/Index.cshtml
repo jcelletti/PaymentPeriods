@@ -1,0 +1,34 @@
+﻿<!doctype html>
+
+<html>
+<head>
+	<title>SPA</title>
+
+	<base href="/" />
+
+	<link href="lib/contents/css/bootstrap.css" rel="stylesheet" />
+	<link href="lib/contents/css/bootstrap-theme.css" rel="stylesheet" />
+
+	<script src="lib/scripts/jquery.js"></script>
+	<script src="lib/scripts/angular.js"></script>
+	<script src="lib/scripts/angular-route.js"></script>
+	<script src="lib/scripts/bootstrap.js"></script>
+
+	<script src="scripts/spa.js"></script>
+</head>
+<body data-ng-app="jmcApp">
+
+	<header data-ng-controller="HeaderCtrl"></header>
+
+	<div data-ng-controller="SpaCtrl">
+		{{test}}
+	</div>
+
+	<div>
+		<div data-ng-view=""></div>
+	</div>
+
+	<footer data-ng-controller="FooterCtrl"></footer>
+
+</body>
+</html>
