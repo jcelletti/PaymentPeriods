@@ -1,4 +1,4 @@
-﻿angular.module('JMCApp')
+﻿angular.module('jmcApp')
 	.controller('SpaCtrl', [
 		'$scope',
 		function ($scope) {

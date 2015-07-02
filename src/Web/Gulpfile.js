@@ -1,88 +1,182 @@
 ﻿/// <binding BeforeBuild='clean' AfterBuild='copy' />
-var gulp = require('gulp');
-var clean = require('gulp-clean');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var less = require('gulp-less');
+var gulp = require('gulp'),
+	clean = require('gulp-clean'),
+	concat = require('gulp-concat'),
+	uglify = require('gulp-uglify'),
+	less = require('gulp-less'),
+	cssmin = require('gulp-cssmin'),
+	wrapper = require('gulp-wrapper');
 
 var project = require('./project.json');
 
-var libRoot = project.webroot + '/lib/'
-var scriptLibRoot = libRoot + 'scripts/'
-var contentsLibRoot = libRoot + 'contents/'
+var wwwroot = function (root) {
+	var libRoot = root + '/lib/';
+	return {
+		base: root,
+		scripts: root + 'Scripts/',
+		contents: {
+			base: root + 'Contents/',
+			css: root + 'Contents/css/',
+			images: root + 'Contents/images/',
+		},
+		ngTemplates: root + 'NgTemplates/',
+		lib: {
+			base: libRoot,
+			scripts: libRoot + 'scripts/',
+			contents: {
+				base: libRoot + 'contents/',
+				css: libRoot + 'contents/css/',
+				images: libRoot + 'contents/images/',
+				fonts: libRoot + 'contents/fonts/'
+			}
+		}
+	}
+}('./wwwroot/');
 
-var scriptsRoot = project.webroot + '/scripts/';
-var contentsRoot = project.webroot + '/contents/';
-var angularTemplatesRoot = project.webroot + '/NgTemplates/'
+var bower = function (root) {
+	var bowerBase = root + 'bower_components/';
+	return {
+		base: bowerBase,
+		angular: {
+			base: bowerBase + 'angular/',
+			route: {
+				base: bowerBase + 'angular-route/'
+			}
+		},
+		bootstrap: {
+			base: bowerBase + 'bootstrap/',
+			dist: {
+				base: bowerBase + 'bootstrap/dist/',
+				css: bowerBase + 'bootstrap/dist/css/',
+				js: bowerBase + 'bootstrap/dist/js/',
+				fonts: bowerBase + 'bootstrap/dist/fonts/'
+			}
+		},
+		jquery: {
+			base: bowerBase + 'jQuery/',
+			dist: bowerBase + 'jQuery/dist/',
+		}
+	}
+}('./');
 
+var custom = function (root) {
+	return {
+		scripts: root + 'Scripts/',
+		ngTemplates: root + 'NgTemplates/',
+		contents: {
+			base: root + 'Contents/',
+			less: root + 'Contents/less/',
+			images: root + 'Contents/images/'
+		}
+	}
+}('./');
 
-var bowerBase = './bower_components/';
+gulp.task('clean', ['clean_lib', 'clean_contents', 'clean_scripts', 'clean_ng_templates']);
 
-gulp.task('clean_lib', function () {
-	return gulp.src(libRoot)
-		.pipe(clean());
-});
+gulp.task('copy', ['copy_bower', 'copy_custom']);
 
-gulp.task('clean_contents', function () {
-	return gulp.src(contentsRoot)
-		.pipe(clean());
-});
+gulp.task('copy_bower', ['copy_bower_scripts', 'copy_bower_css', 'copy_bower_fonts']);
 
-gulp.task('clean_scripts', function () {
-	return gulp.src(scriptsRoot)
-		.pipe(clean());
-});
+gulp.task('copy_custom', ['copy_scripts', 'copy_less', 'copy_images', 'copy_ng_templates']);
 
-gulp.task('clean', ['clean_lib', 'clean_contents', 'clean_scripts']);
+gulp.task('clean_lib',
+	function () {
+		return gulp.src([
+			wwwroot.lib.base
+		])
+			.pipe(clean());
+	});
 
-var getJs = function (src, dest) {
-	return gulp.src(src)
-		.pipe(uglify())
-		.pipe(gulp.dest(dest));
-};
+gulp.task('clean_contents',
+	function () {
+		return gulp.src([
+			wwwroot.contents.base
+		])
+			.pipe(clean());
+	});
 
-gulp.task('copy_angular', function () {
-	return getJs([
-		bowerBase + 'angular/angular.js',
-		bowerBase + 'angular-route/angular-route.js'
-	], scriptLibRoot);
-});
+gulp.task('clean_scripts',
+	function () {
+		return gulp.src([
+			wwwroot.scripts
+		])
+			.pipe(clean());
+	});
 
-gulp.task('copy_jquery', function () {
-	return getJs([
-		bowerBase + 'jQuery/dist/jquery.js'
-	], scriptLibRoot);
-});
+gulp.task('clean_ng_templates',
+	function () {
+		return gulp.src([
+			wwwroot.ngTemplates
+		])
+			.pipe(clean());
+	});
 
-gulp.task('copy_bootstrap_js', function () {
-	return getJs([
-		bowerBase + 'bootstrap/dist/js/bootstrap.js'
-	], scriptLibRoot);
-});
+gulp.task('copy_bower_scripts',
+	function () {
+		return gulp.src([
+			bower.angular.base + 'angular.js',
+			bower.angular.route.base + 'angular-route.js',
+			bower.bootstrap.dist.js + 'bootstrap.js',
+			bower.jquery.dist + 'jquery.js'
+		])
+			.pipe(uglify())
+			.pipe(gulp.dest(wwwroot.lib.scripts));
+	});
 
-gulp.task('copy_bootstrap_css', function () {
-	return gulp.src([
-		bowerBase + 'bootstrap/less/*.less'
-	])
-		.pipe(concat('bootstrap.css'))
-		.pipe(less())
-		.pipe(gulp.dest(contentsLibRoot + 'css/'));
-});
+gulp.task('copy_bower_css',
+	function () {
+		return gulp.src([
+			bower.bootstrap.dist.css + 'bootstrap.css',
+			bower.bootstrap.dist.css + 'bootstrap-theme.css',
+		])
+			.pipe(cssmin())
+			.pipe(gulp.dest(wwwroot.lib.contents.css));
+	});
 
-gulp.task('copy_scripts', function () {
-	return gulp.src([
-		'Library/Scripts/**/*.js'
-	])
-		.pipe(concat('SPA.js'))
-		.pipe(uglify())
-		.pipe(gulp.dest(scriptsRoot));
-});
+gulp.task('copy_bower_fonts',
+	function () {
+		return gulp.src([
+			bower.bootstrap.dist.fonts + '*',
+		])
+			.pipe(gulp.dest(wwwroot.lib.contents.fonts));
+	});
 
-gulp.task('copy_templates', function () {
-	return gulp.src([
-		'Library/NgTemplates/**/*.html'
-	])
-	.pipe(gulp.dest(angularTemplatesRoot));
-});
+gulp.task('copy_scripts',
+	function () {
+		return gulp.src([
+			custom.scripts + '**/*.js'
+		])
+			.pipe(wrapper({
+				header: '\n/* BEGIN ${filename} */\n',
+				footer: '\n/* END   ${filename} */\n',
+			}))
+			.pipe(concat('SPA.js'))
+			//.pipe(uglify())
+			.pipe(gulp.dest(wwwroot.scripts));
+	});
 
-gulp.task('copy', ['copy_jquery', 'copy_angular', 'copy_bootstrap_js', 'copy_bootstrap_css', 'copy_scripts', 'copy_templates']);
+gulp.task('copy_less',
+	function () {
+		return gulp.src([
+			custom.contents.less + '**/*.less'
+		])
+			.pipe(concat('spa.css'))
+			.pipe(less())
+			.pipe(gulp.dest(wwwroot.contents.css));
+	});
+
+gulp.task('copy_images',
+	function () {
+		return gulp.src([
+			custom.contents.images + '**/*'
+		])
+			.pipe(gulp.dest(wwwroot.contents.images));
+	});
+
+gulp.task('copy_ng_templates',
+	function () {
+		return gulp.src([
+			custom.ngTemplates + '**/*.html'
+		])
+			.pipe(gulp.dest(wwwroot.ngTemplates));
+	});

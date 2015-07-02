@@ -1,8 +1,17 @@
-﻿angular.module('JMCApp')
-	.provider('template',
+﻿angular.module('jmc.templates', [])
+	.provider('jmcTemplate', [
 		function () {
-			var base = 'NgTemplates/';
+			var base;
+
+			var self = this;
+			self.Setup = function (url) {
+				base = $.trim(url);
+			};
+
 			this.$get = function () {
+				if (!base) {
+					throw 'Base Url must be set';
+				};
 				return {
 					Url: function (name, folder) {
 						var url = base;
@@ -17,4 +26,4 @@
 				};
 			}
 		}
-	);
+	]);

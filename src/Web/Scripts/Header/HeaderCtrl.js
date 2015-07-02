@@ -1,4 +1,4 @@
-﻿angular.module('JMCApp')
+﻿angular.module('jmc.header')
 	.controller('HeaderCtrl', [
 		function () { }
 	]);
